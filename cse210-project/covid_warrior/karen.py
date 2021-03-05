@@ -2,6 +2,9 @@ from game import constants
 from game.actor import Actor
 from game.point import Point
 
+# We should make Karens and Viruses the same class. The only difference between the two are that they should be in
+# two different lists and should be drawn differently
+
 class Karen(Actor):
     """This class will initialize, draw, and set a position nad velocity to a list of karens
 
