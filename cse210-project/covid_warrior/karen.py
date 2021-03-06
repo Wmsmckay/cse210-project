@@ -5,7 +5,7 @@ from game.point import Point
 # We should make Karens and Viruses the same class. The only difference between the two are that they should be in
 # two different lists and should be drawn differently
 
-class Karen(Actor):
+class Enemy(Actor):
     """This class will initialize, draw, and set a position nad velocity to a list of karens
 
     Stereotype:
@@ -26,7 +26,7 @@ class Karen(Actor):
             self: An instance of Karen"""
         self.velocity = velocity
         
-    def add_karen(self, delta_time: float):
+    def add_enemy(self, delta_time: float):
         """Adds a new karen to the screen
 
         Arguments:
@@ -34,16 +34,16 @@ class Karen(Actor):
         """
 
         # Create the KAREN
-        karen = arcade.Sprite("images/missile.png", SCALING)
+        enemy = arcade.Sprite("images/missile.png", SCALING)
 
         # Set its position to a random height and off screen right
-        karen.left = random.randint(self.width, self.width + 80) # Get the right variable name for the constants
-        karen.top = random.randint(10, self.height - 10)
+        enemy.left = random.randint(self.width, self.width + 80) # Get the right variable name for the constants
+        enemy.top = random.randint(10, self.height - 10)
         
-    def move_karen(self):
+    def move_enemy(self):
         # Set its speed to a random speed heading left
-        karen.velocity = (random.randint(-20, -5), 0)
+        enemy.velocity = (random.randint(-20, -5), 0)
 
         # Add it to the enemies list
-        self.karen_list.append(karen)
-        self.all_sprites.append(karen)
+        self.enemy_list.append(enemy)
+        self.all_sprites.append(enemy)
