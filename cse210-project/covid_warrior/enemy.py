@@ -21,10 +21,13 @@ class Enemy(Actor):
     """
     
     def __init__(self):
-        """The class constructor
+        """The class constructor. invokes a superclass constructor in order to change the variables in the Actor class
+        according to the enemies needs.
         ARGS: 
-            self: An instance of Karen"""
-        self.velocity = velocity
+            self: An instance of Actor"""
+        super().__init__()
+        self.set_position = Point(enemy.left, enemy.top)
+        self.set_velocity = enemy.velocity #????? not sure if this is right
         
     def add_enemy(self, delta_time: float):
         """Adds a new karen to the screen
