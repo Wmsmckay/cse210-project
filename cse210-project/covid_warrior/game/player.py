@@ -1,4 +1,8 @@
-class Input_service:
+from game.point import Point
+# from game.actor import Actor
+import arcade
+
+class Player(arcade.Sprite):
     """[inert description]
 
     Stereotype:
@@ -12,3 +16,11 @@ class Input_service:
     Attributes:
         [insert attributes]
     """
+
+    # def __init__(self, sprite):
+    #     # self.set_sprite(sprite)
+    #     # self._position = Point(0, 0)
+
+
+    def on_update(self):
+        self.update()

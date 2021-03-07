@@ -1,4 +1,4 @@
-from game import constants
+import game.constants
 from game.point import Point
 
 class Actor:
@@ -77,3 +77,4 @@ class Actor:
             position (Point): The given velocity.
         """
         self._velocity = velocity
+

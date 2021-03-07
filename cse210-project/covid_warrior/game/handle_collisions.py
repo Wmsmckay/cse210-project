@@ -1,9 +1,9 @@
 from game.constants import MAX_X
 from game.constants import MAX_Y
 import random
-from game import constants
+from game.constants import constants
 
-# NEED TO IMPORT CLASS WHEE KAREN, VIRUS, HAND SANITIZER, AND MASK LIST WAS CREATED
+# NEED TO IMPORT CLASS WHERE KAREN, VIRUS, HAND SANITIZER, AND MASK LIST WAS CREATED
 # NEED TO USE CORRECT VARIABLES FOR LISTS OF KAREN, VIRUS, HAND SANITIZER, AND MASK
 
 class Handle_collisions:
@@ -26,13 +26,9 @@ class Handle_collisions:
         Arguments:
             delta_time {float} -- Time since the last update
         """
-
-        # Did a virus OR Karen hit you? If so, end game
-        if self.player.collides_with_list(self.enemies_list):
-            arcade.close_window()
          
         # Checks if a mask has hit a Karen, and removes the Karen if she has been hit
-        if self.masks.collides_with_list(self.karens_list):
+        if self.mask.collides_with_list(self.enemies_list):
             self.remove_from_karen_lists()
             
         # Checks if a hand sanitizer has hit a virus, and removes the virus if it has been hit
@@ -47,3 +43,14 @@ class Handle_collisions:
         # Update everything
         self.all_sprites.update()
 
+    def check_collisions(self, actors):
+        
+        for item in actors.items():
+            if item.get_text() == player
+
+    actors:[
+    ['mask', point, radius, color(sprite)]
+    ['karen', point, radius, color(sprite)]
+    ['virus', point, radius, color(sprite)]
+    ['player', point, radius, color(sprite)]
+        ]
