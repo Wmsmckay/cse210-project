@@ -10,11 +10,12 @@ ENEMY_SCALING_COIN = 0.2
 ENEMY_COUNT = 25
 
 SPRITE_SCALING_PLAYER = 0.5
-SPRITE_SCALING_ENEMY = 0.5
+# SPRITE_SCALING_ENEMY = 0.5
+SPRITE_SCALING_ENEMY = 0.1
 SPRITE_SCALING_PROJECTILE = 0.7
-BULLET_SPEED = 5
+BULLET_SPEED = 6
 
-PLAYER_VELOCITY = 2
+PLAYER_VELOCITY = 7
 
 
 """
@@ -22,7 +23,9 @@ NOTES:
 'A' fires one projectile
 'D' fire the other projectile
 Left and Right arrows control player motions
-Collisions are handled to get rid of projectile and enemy when the correct hit occurs otherwise the projectile is removed
+Collisions are handled to get rid of projectile and enemy 
+when the correct hit occurs otherwise the projectile is 
+removed.
 """
 
 
@@ -34,17 +37,17 @@ class Enemy(arcade.Sprite):
 
     def reset_pos(self):
 
-        # Reset the coin to a random spot above the screen
+        # Reset the enemy to a random spot above the screen
         self.center_y = random.randrange(SCREEN_HEIGHT + 20,
                                          SCREEN_HEIGHT + 100)
         self.center_x = random.randrange(SCREEN_WIDTH)
 
     def update(self):
 
-        # Move the coin
+        # Move the enemy
         self.center_y -= 1
 
-        # See if the coin has fallen off the bottom of the screen.
+        # See if the enemy has fallen off the bottom of the screen.
         # If so, reset it.
         if self.top < 0:
             self.reset_pos()
@@ -59,6 +62,7 @@ class Player():
         # Set up the player
         # Character image from kenney.nl
         self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING_PLAYER)
+        # self.player_sprite = arcade.Sprite("./sprites/mustache-logo.png")
         self.player_sprite.center_x = 400
         self.player_sprite.center_y = 50
         self.player_sprite_list.append(self.player_sprite)
@@ -80,9 +84,6 @@ class Player():
 class MyGame(arcade.Window):
     """
     Main application class.
-    NOTE: Go ahead and delete the methods you don't need.
-    If you do need a method, delete the 'pass' and replace it
-    with your own code. Don't leave 'pass' in this program.
     """
 
     def __init__(self, width, height, title):
@@ -93,7 +94,7 @@ class MyGame(arcade.Window):
         # If you have sprite lists, you should create them here,
         # and set them to None
 
-               # Variables that will hold sprite lists
+        # Variables that will hold sprite lists
         self.player = Player()
         self.enemy_sprite_list = None
         self.projectile_sprite_list = None
@@ -101,6 +102,9 @@ class MyGame(arcade.Window):
         self.enemyship_sprite_list = None
         self.holding_left = False
         self.holding_right = False
+
+        # player's score
+        self.score = 0
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -113,32 +117,36 @@ class MyGame(arcade.Window):
         self.projectile2_sprite_list = arcade.SpriteList()
         self.enemyship_sprite_list = arcade.SpriteList()
 
+        # player's score
+        self.score = 0
 
-        # Set up enemy
+
+        # Set up karen
         for i in range(1, ENEMY_COUNT):
-            enemy = Enemy(":resources:images/items/coinGold.png", SPRITE_SCALING_ENEMY)
+            # enemy = Enemy(":resources:images/items/coinGold.png", SPRITE_SCALING_ENEMY)
+            karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
         # Set its position to a random height and off screen right
-            enemy.left = random.randint(0, SCREEN_WIDTH)
-            enemy.top = random.randint(0, SCREEN_HEIGHT)
+            karen.left = random.randint(0, SCREEN_WIDTH)
+            karen.top = random.randint(0, SCREEN_HEIGHT)
 
-            self.enemy_sprite_list.append(enemy)
+            self.enemy_sprite_list.append(karen)
 
-        # Set up enemyship
+        # Set up virus
         for i in range(1, ENEMY_COUNT):
-            enemyship = Enemy(":resources:images/space_shooter/playerShip2_orange.png", SPRITE_SCALING_ENEMY)
+            virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
         # Set its position to a random height and off screen right
-            enemyship.left = random.randint(0, SCREEN_WIDTH)
-            enemyship.top = random.randint(0, SCREEN_HEIGHT)
+            virus.left = random.randint(0, SCREEN_WIDTH)
+            virus.top = random.randint(0, SCREEN_HEIGHT)
 
-            self.enemyship_sprite_list.append(enemyship)
+            self.enemyship_sprite_list.append(virus)
 
-        # Set up projectile
-        self.projectile_sprite = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", SPRITE_SCALING_PROJECTILE)
-        self.projectile_sprite_list.append(self.projectile_sprite)
+        # # Set up projectile
+        # self.projectile_sprite = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", SPRITE_SCALING_PROJECTILE)
+        # self.projectile_sprite_list.append(self.projectile_sprite)
 
-        # Set up projectile2
-        self.projectile2_sprite = arcade.Sprite(":resources:images/space_shooter/playerShip1_green.png", SPRITE_SCALING_PROJECTILE)
-        self.projectile2_sprite_list.append(self.projectile2_sprite)
+        # # Set up projectile2
+        # self.projectile2_sprite = arcade.Sprite(":resources:images/space_shooter/playerShip1_green.png", SPRITE_SCALING_PROJECTILE)
+        # self.projectile2_sprite_list.append(self.projectile2_sprite)
         
         # All sprite list
         self.all_sprites = arcade.SpriteList()
@@ -158,6 +166,11 @@ class MyGame(arcade.Window):
         self.player.draw()
         self.projectile_sprite_list.draw()
         self.projectile2_sprite_list.draw()
+
+        # Draw our score on the screen, scrolling it with the viewport
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 5, 570,
+                         arcade.csscolor.WHITE, 18)
 
 
     def on_update(self, delta_time):
@@ -182,6 +195,7 @@ class MyGame(arcade.Window):
                 if arcade.check_for_collision(enemy, projectile):
                     self.enemy_sprite_list.remove(enemy)
                     self.projectile_sprite_list.remove(projectile)
+                    self.score += 50
             for projectile in self.projectile2_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
                     self.projectile2_sprite_list.remove(projectile)
@@ -192,6 +206,7 @@ class MyGame(arcade.Window):
                 if arcade.check_for_collision(enemy, projectile):
                     self.enemyship_sprite_list.remove(enemy)
                     self.projectile2_sprite_list.remove(projectile)
+                    self.score += 100
             for projectile in self.projectile_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
                     self.projectile_sprite_list.remove(projectile)
@@ -205,7 +220,7 @@ class MyGame(arcade.Window):
         # self.projectile_sprite.center_y = self.projectile_sprite.center_y + 5
         if key == arcade.key.A:
                 # Create a bullet
-            self.projectile_sprite = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", SPRITE_SCALING_PROJECTILE)
+            self.projectile_sprite = arcade.Sprite("./sprites/facemask.png", SPRITE_SCALING_PROJECTILE)
 
             # The image points to the right, and we want it to point up. So
             # rotate it.
@@ -223,7 +238,7 @@ class MyGame(arcade.Window):
             
         if key == arcade.key.D:
                 # Create a bullet
-            self.projectile2_sprite = arcade.Sprite(":resources:images/space_shooter/playerShip1_green.png", SPRITE_SCALING_PROJECTILE)
+            self.projectile2_sprite = arcade.Sprite("./sprites/sanitizer-drop.png", SPRITE_SCALING_PROJECTILE)
 
             # The image points to the right, and we want it to point up. So
             # rotate it.
