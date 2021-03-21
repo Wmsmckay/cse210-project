@@ -23,7 +23,7 @@ python -m pip install arcade
 After you've installed the required libraries, open a terminal and browse to the project's root folder. 
 Start the program by running the following command.
 
-python3 covid_warrior
+python3 covid_warrior/covid_warrior.py
 
 You can also run the program from an IDE like Visual Studio Code. Start your IDE and open the project folder. 
 Select the main module inside the covid_warrior folder and click the "run" icon.
