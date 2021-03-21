@@ -18,6 +18,8 @@ BULLET_SPEED = 6
 PLAYER_VELOCITY = 7
 
 
+
+
 """
 NOTES:
 'A' fires one projectile
@@ -66,6 +68,8 @@ class Player():
         self.player_sprite.center_x = 400
         self.player_sprite.center_y = 50
         self.player_sprite_list.append(self.player_sprite)
+
+
     
     def move_left(self):
         if self.player_sprite.center_x > 0:
@@ -102,6 +106,13 @@ class MyGame(arcade.Window):
         self.enemyship_sprite_list = None
         self.holding_left = False
         self.holding_right = False
+
+        # Load sounds
+        self.shoot_mask = arcade.load_sound(":resources:sounds/laser4.wav")
+        self.shoot_sanitizer = arcade.load_sound(":resources:sounds/laser5.wav")
+        self.good_hit_mask = arcade.load_sound(":resources:sounds/rockHit2.wav")
+        self.good_hit_sanitizer = arcade.load_sound(":resources:sounds/laser4.wav")
+        self.bad_hit = arcade.load_sound(":resources:sounds/hit1.wav")
 
         # player's score
         self.score = 0
@@ -196,9 +207,11 @@ class MyGame(arcade.Window):
                     self.enemy_sprite_list.remove(enemy)
                     self.projectile_sprite_list.remove(projectile)
                     self.score += 50
+                    arcade.play_sound(self.good_hit_mask)
             for projectile in self.projectile2_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
                     self.projectile2_sprite_list.remove(projectile)
+                    arcade.play_sound(self.bad_hit)
                 
                     
         for enemy in self.enemyship_sprite_list: 
@@ -207,9 +220,11 @@ class MyGame(arcade.Window):
                     self.enemyship_sprite_list.remove(enemy)
                     self.projectile2_sprite_list.remove(projectile)
                     self.score += 100
+                    arcade.play_sound(self.good_hit_sanitizer)
             for projectile in self.projectile_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
                     self.projectile_sprite_list.remove(projectile)
+                    arcade.play_sound(self.bad_hit)
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -235,6 +250,9 @@ class MyGame(arcade.Window):
 
             # Add the bullet to the appropriate lists
             self.projectile_sprite_list.append(self.projectile_sprite)
+
+            #play bullet sound
+            arcade.play_sound(self.shoot_mask)
             
         if key == arcade.key.D:
                 # Create a bullet
@@ -253,6 +271,9 @@ class MyGame(arcade.Window):
 
             # Add the bullet to the appropriate lists
             self.projectile2_sprite_list.append(self.projectile2_sprite)
+
+            #play bullet sound
+            arcade.play_sound(self.shoot_sanitizer)
         
         if key == arcade.key.LEFT:
             self.holding_left = True
