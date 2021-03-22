@@ -16,6 +16,10 @@ BULLET_SPEED = 6
 
 PLAYER_VELOCITY = 7
 
+KILL_COUNT = 0
+
+LEVEL = 1
+ENEMY_VELOCITY = 0.5
 
 
 
@@ -49,18 +53,13 @@ class Enemy(arcade.Sprite):
     def update(self):
 
         # Move the enemy
-        self.center_y -= 1
+        self.center_y -= ENEMY_VELOCITY
 
         # See if the enemy has fallen off the bottom of the screen.
         # If so, reset it.
         if self.top < 0:
             # self.reset_pos()
             self.remove_from_sprite_lists()
-            self
-
-
-
-            
             
 
 
@@ -73,7 +72,9 @@ class Player():
         self.player_sprite_list = arcade.SpriteList()
         # Set up the player
         # Character image from kenney.nl
-        self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING_PLAYER)
+        # self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite("./sprites/shooter.png", SPRITE_SCALING_PLAYER)
+
         # self.player_sprite = arcade.Sprite("./sprites/mustache-logo.png")
         self.player_sprite.center_x = 400
         self.player_sprite.center_y = 50
@@ -122,7 +123,7 @@ class MyGame(arcade.Window):
         self.holding_right = False
 
         # Load sounds
-        self.shoot_mask = arcade.load_sound(":resources:sounds/laser4.wav")
+        self.shoot_mask = arcade.load_sound(":resources:sounds/laser3.wav")
         self.shoot_sanitizer = arcade.load_sound(":resources:sounds/laser5.wav")
         self.good_hit_mask = arcade.load_sound(":resources:sounds/rockHit2.wav")
         self.good_hit_sanitizer = arcade.load_sound(":resources:sounds/laser4.wav")
@@ -167,9 +168,14 @@ class MyGame(arcade.Window):
         self.mask_sprite_list.draw()
         self.sanitizer_sprite_list.draw()
 
-        # Draw our score on the screen, scrolling it with the viewport
+        # Draw our score on the screen
         score_text = f"Score: {self.score}"
         arcade.draw_text(score_text, 5, 570,
+                         arcade.csscolor.WHITE, 18)
+
+        # Draw the level on the screen
+        level_text = f"Level: {LEVEL}"
+        arcade.draw_text(level_text, 700, 570,
                          arcade.csscolor.WHITE, 18)
 
 
@@ -210,19 +216,18 @@ class MyGame(arcade.Window):
                 if randoNum % 3 == 0:
                     # Set up virus
                     virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
-                    # Set its position to a random height and off screen right
-                    virus.left = random.randint(20, SCREEN_WIDTH - 20)
+                    # Set its position to a random position at the top of the screen
+                    virus.left = random.randint(60, SCREEN_WIDTH - 75)
                     virus.top = SCREEN_HEIGHT
                     self.virus_sprite_list.append(virus)
                     
                 else: 
                     # Set up karen
                     karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
-                    # Set its position to a random height and off screen right
-                    karen.left = random.randint(20, SCREEN_WIDTH - 20)
+                    # Set its position to a random position at the top of the screen
+                    karen.left = random.randint(60, SCREEN_WIDTH - 75)
                     karen.top = SCREEN_HEIGHT
                     self.karen_sprite_list.append(karen)
-
 
 
     def check_projectile_collisions(self):
@@ -260,44 +265,28 @@ class MyGame(arcade.Window):
         """
         # self.projectile_sprite.center_y = self.projectile_sprite.center_y + 5
         if key == arcade.key.A:
-                # Create a bullet
+            # Create a bullet
             self.projectile_sprite = arcade.Sprite("./sprites/facemask.png", SPRITE_SCALING_PROJECTILE)
-
-            # The image points to the right, and we want it to point up. So
-            # rotate it.
-            self.projectile_sprite.angle = 90
-
             # Give the bullet a speed
             self.projectile_sprite.change_y = BULLET_SPEED
-
             # Position the bullet
             self.projectile_sprite.center_x = self.player.player_sprite.center_x
             self.projectile_sprite.bottom = self.player.player_sprite.top
-
             # Add the bullet to the appropriate lists
             self.mask_sprite_list.append(self.projectile_sprite)
-
             #play bullet sound
             arcade.play_sound(self.shoot_mask)
             
         if key == arcade.key.D:
-                # Create a bullet
+            # Create a bullet
             self.projectile2_sprite = arcade.Sprite("./sprites/sanitizer-drop.png", SPRITE_SCALING_PROJECTILE)
-
-            # The image points to the right, and we want it to point up. So
-            # rotate it.
-            self.projectile2_sprite.angle = 90
-
             # Give the bullet a speed
             self.projectile2_sprite.change_y = BULLET_SPEED
-
             # Position the bullet
             self.projectile2_sprite.center_x = self.player.player_sprite.center_x
             self.projectile2_sprite.bottom = self.player.player_sprite.top
-
             # Add the bullet to the appropriate lists
             self.sanitizer_sprite_list.append(self.projectile2_sprite)
-
             #play bullet sound
             arcade.play_sound(self.shoot_sanitizer)
         
@@ -309,16 +298,16 @@ class MyGame(arcade.Window):
 
  
 
-    def check_keys(self):
-        """
-        Checks to see if the user is holding down an
-        arrow key, and if so, takes appropriate action.
-        """
-        if self.holding_left:
-            self.ship.turn_left()
+    # def check_keys(self):
+    #     """
+    #     Checks to see if the user is holding down an
+    #     arrow key, and if so, takes appropriate action.
+    #     """
+    #     if self.holding_left:
+    #         self.ship.turn_left()
 
-        if self.holding_right:
-            self.ship.turn_right()
+    #     if self.holding_right:
+    #         self.ship.turn_right()
             
         
 
@@ -337,8 +326,6 @@ class MyGame(arcade.Window):
 
 
 
-
-        
 
 def main():
     """ Main method """
