@@ -7,10 +7,9 @@ SCREEN_TITLE = "COVID Warrior"
 
 ENEMY_SCALING_PLAYER = 0.5
 ENEMY_SCALING_COIN = 0.2
-ENEMY_COUNT = 25
+ENEMY_COUNT = 12
 
 SPRITE_SCALING_PLAYER = 0.5
-# SPRITE_SCALING_ENEMY = 0.5
 SPRITE_SCALING_ENEMY = 0.1
 SPRITE_SCALING_PROJECTILE = 0.7
 BULLET_SPEED = 6
@@ -29,6 +28,9 @@ Collisions are handled to get rid of projectile and enemy
 when the correct hit occurs otherwise the projectile is 
 removed.
 """
+
+
+
 
 
 class Enemy(arcade.Sprite):
@@ -52,9 +54,17 @@ class Enemy(arcade.Sprite):
         # See if the enemy has fallen off the bottom of the screen.
         # If so, reset it.
         if self.top < 0:
-            self.reset_pos()
+            # self.reset_pos()
+            self.remove_from_sprite_lists()
+            self
+
+
+
             
             
+
+
+
 class Player():
     def __init__(self):
         self.player_sprite_list = None
@@ -85,6 +95,10 @@ class Player():
     
 
 
+
+
+
+
 class MyGame(arcade.Window):
     """
     Main application class.
@@ -100,10 +114,10 @@ class MyGame(arcade.Window):
 
         # Variables that will hold sprite lists
         self.player = Player()
-        self.enemy_sprite_list = None
-        self.projectile_sprite_list = None
-        self.projectile2_sprite_list = None
-        self.enemyship_sprite_list = None
+        self.karen_sprite_list = None
+        self.mask_sprite_list = None
+        self.sanitizer_sprite_list = None
+        self.virus_sprite_list = None
         self.holding_left = False
         self.holding_right = False
 
@@ -123,44 +137,47 @@ class MyGame(arcade.Window):
 
         # Sprite lists
         
-        self.enemy_sprite_list = arcade.SpriteList()
-        self.projectile_sprite_list = arcade.SpriteList()
-        self.projectile2_sprite_list = arcade.SpriteList()
-        self.enemyship_sprite_list = arcade.SpriteList()
+        self.karen_sprite_list = arcade.SpriteList()
+        self.mask_sprite_list = arcade.SpriteList()
+        self.sanitizer_sprite_list = arcade.SpriteList()
+        self.virus_sprite_list = arcade.SpriteList()
 
         # player's score
         self.score = 0
 
-
-        # Set up karen
-        for i in range(1, ENEMY_COUNT):
-            # enemy = Enemy(":resources:images/items/coinGold.png", SPRITE_SCALING_ENEMY)
-            karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
-        # Set its position to a random height and off screen right
-            karen.left = random.randint(0, SCREEN_WIDTH)
-            karen.top = random.randint(0, SCREEN_HEIGHT)
-
-            self.enemy_sprite_list.append(karen)
-
-        # Set up virus
-        for i in range(1, ENEMY_COUNT):
-            virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
-        # Set its position to a random height and off screen right
-            virus.left = random.randint(0, SCREEN_WIDTH)
-            virus.top = random.randint(0, SCREEN_HEIGHT)
-
-            self.enemyship_sprite_list.append(virus)
-
-        # # Set up projectile
-        # self.projectile_sprite = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", SPRITE_SCALING_PROJECTILE)
-        # self.projectile_sprite_list.append(self.projectile_sprite)
-
-        # # Set up projectile2
-        # self.projectile2_sprite = arcade.Sprite(":resources:images/space_shooter/playerShip1_green.png", SPRITE_SCALING_PROJECTILE)
-        # self.projectile2_sprite_list.append(self.projectile2_sprite)
-        
+        self.spawn_all_enemies()
         # All sprite list
         self.all_sprites = arcade.SpriteList()
+
+
+    def spawn_all_enemies(self):
+        # set up enemies
+        for i in range(1, ENEMY_COUNT):
+            randoNum = random.randint(1, 100)
+
+            if randoNum % 3 == 0:
+                # # Set up virus
+            # for i in range(1, ENEMY_COUNT):
+                virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
+                # Set its position to a random height and off screen right
+                virus.left = random.randint(20, SCREEN_WIDTH - 20)
+                # virus.top = random.randint((SCREEN_HEIGHT / 2) + 10, SCREEN_HEIGHT - 10)
+                virus.top = SCREEN_HEIGHT
+                self.virus_sprite_list.append(virus)
+                
+            else: 
+                # # Set up karen
+                # for i in range(1, ENEMY_COUNT):
+                #     # enemy = Enemy(":resources:images/items/coinGold.png", SPRITE_SCALING_ENEMY)
+                karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
+
+                # Set its position to a random height and off screen right
+                karen.left = random.randint(20, SCREEN_WIDTH - 20)
+                # karen.top = random.randint((SCREEN_HEIGHT / 2) + 10, SCREEN_HEIGHT - 10)
+                karen.top = SCREEN_HEIGHT
+                self.karen_sprite_list.append(karen)
+                
+        
 
     def on_draw(self):
         """
@@ -172,11 +189,11 @@ class MyGame(arcade.Window):
         arcade.start_render()
 
         # Call draw() on all your sprite lists below
-        self.enemy_sprite_list.draw()
-        self.enemyship_sprite_list.draw()
+        self.karen_sprite_list.draw()
+        self.virus_sprite_list.draw()
         self.player.draw()
-        self.projectile_sprite_list.draw()
-        self.projectile2_sprite_list.draw()
+        self.mask_sprite_list.draw()
+        self.sanitizer_sprite_list.draw()
 
         # Draw our score on the screen, scrolling it with the viewport
         score_text = f"Score: {self.score}"
@@ -195,36 +212,41 @@ class MyGame(arcade.Window):
         if self.holding_right == True:
             self.player.move_right()
         self.player.draw()
-        self.enemy_sprite_list.update()
-        self.enemyship_sprite_list.update()
-        self.projectile_sprite_list.update()
-        self.projectile2_sprite_list.update()
+        self.karen_sprite_list.update()
+        self.virus_sprite_list.update()
+        self.mask_sprite_list.update()
+        self.sanitizer_sprite_list.update()
         
         # Loop through each colliding sprite, remove it, and add to the score.
-        for enemy in self.enemy_sprite_list: 
-            for projectile in self.projectile_sprite_list:
+        self.check_projectile_collisions()
+
+
+    def check_projectile_collisions(self):
+        # Loop through each colliding sprite, remove it, and add to the score.
+        for enemy in self.karen_sprite_list: 
+            for projectile in self.mask_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
-                    self.enemy_sprite_list.remove(enemy)
-                    self.projectile_sprite_list.remove(projectile)
+                    self.karen_sprite_list.remove(enemy)
+                    self.mask_sprite_list.remove(projectile)
                     self.score += 50
                     arcade.play_sound(self.good_hit_mask)
-            for projectile in self.projectile2_sprite_list:
+            for projectile in self.sanitizer_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
-                    self.projectile2_sprite_list.remove(projectile)
+                    self.sanitizer_sprite_list.remove(projectile)
                     arcade.play_sound(self.bad_hit)
                 
-                    
-        for enemy in self.enemyship_sprite_list: 
-            for projectile in self.projectile2_sprite_list:
+        for enemy in self.virus_sprite_list: 
+            for projectile in self.sanitizer_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
-                    self.enemyship_sprite_list.remove(enemy)
-                    self.projectile2_sprite_list.remove(projectile)
+                    self.virus_sprite_list.remove(enemy)
+                    self.sanitizer_sprite_list.remove(projectile)
                     self.score += 100
                     arcade.play_sound(self.good_hit_sanitizer)
-            for projectile in self.projectile_sprite_list:
+            for projectile in self.mask_sprite_list:
                 if arcade.check_for_collision(enemy, projectile):
-                    self.projectile_sprite_list.remove(projectile)
+                    self.mask_sprite_list.remove(projectile)
                     arcade.play_sound(self.bad_hit)
+
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -249,7 +271,7 @@ class MyGame(arcade.Window):
             self.projectile_sprite.bottom = self.player.player_sprite.top
 
             # Add the bullet to the appropriate lists
-            self.projectile_sprite_list.append(self.projectile_sprite)
+            self.mask_sprite_list.append(self.projectile_sprite)
 
             #play bullet sound
             arcade.play_sound(self.shoot_mask)
@@ -270,7 +292,7 @@ class MyGame(arcade.Window):
             self.projectile2_sprite.bottom = self.player.player_sprite.top
 
             # Add the bullet to the appropriate lists
-            self.projectile2_sprite_list.append(self.projectile2_sprite)
+            self.sanitizer_sprite_list.append(self.projectile2_sprite)
 
             #play bullet sound
             arcade.play_sound(self.shoot_sanitizer)
@@ -295,7 +317,6 @@ class MyGame(arcade.Window):
             self.ship.turn_right()
             
         
-        
 
     def on_key_release(self, key, key_modifiers):
         """
@@ -309,8 +330,10 @@ class MyGame(arcade.Window):
 
         if key == arcade.key.RIGHT:
             self.holding_right = False
-    
-   
+
+
+
+
         
 
 def main():
