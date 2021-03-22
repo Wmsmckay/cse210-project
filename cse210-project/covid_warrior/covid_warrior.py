@@ -145,38 +145,10 @@ class MyGame(arcade.Window):
         # player's score
         self.score = 0
 
-        self.spawn_all_enemies()
+        # self.spawn_all_enemies()
+
         # All sprite list
         self.all_sprites = arcade.SpriteList()
-
-
-    def spawn_all_enemies(self):
-        # set up enemies
-        for i in range(1, ENEMY_COUNT):
-            randoNum = random.randint(1, 100)
-
-            if randoNum % 3 == 0:
-                # # Set up virus
-            # for i in range(1, ENEMY_COUNT):
-                virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
-                # Set its position to a random height and off screen right
-                virus.left = random.randint(20, SCREEN_WIDTH - 20)
-                # virus.top = random.randint((SCREEN_HEIGHT / 2) + 10, SCREEN_HEIGHT - 10)
-                virus.top = SCREEN_HEIGHT
-                self.virus_sprite_list.append(virus)
-                
-            else: 
-                # # Set up karen
-                # for i in range(1, ENEMY_COUNT):
-                #     # enemy = Enemy(":resources:images/items/coinGold.png", SPRITE_SCALING_ENEMY)
-                karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
-
-                # Set its position to a random height and off screen right
-                karen.left = random.randint(20, SCREEN_WIDTH - 20)
-                # karen.top = random.randint((SCREEN_HEIGHT / 2) + 10, SCREEN_HEIGHT - 10)
-                karen.top = SCREEN_HEIGHT
-                self.karen_sprite_list.append(karen)
-                
         
 
     def on_draw(self):
@@ -219,6 +191,38 @@ class MyGame(arcade.Window):
         
         # Loop through each colliding sprite, remove it, and add to the score.
         self.check_projectile_collisions()
+        self.spawn_enemies(delta_time)
+    
+
+    def spawn_enemies(self, delta_time):
+
+        for i in range(ENEMY_COUNT):
+            # Have a random 1 in 200 change of shooting each 1/60th of a second
+            odds = 600
+
+            # Adjust odds based on delta-time
+            adj_odds = int(odds * (1 / 60) / delta_time)
+
+
+            if random.randrange(adj_odds) == 0:
+                randoNum = random.randint(1, 100)
+
+                if randoNum % 3 == 0:
+                    # Set up virus
+                    virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
+                    # Set its position to a random height and off screen right
+                    virus.left = random.randint(20, SCREEN_WIDTH - 20)
+                    virus.top = SCREEN_HEIGHT
+                    self.virus_sprite_list.append(virus)
+                    
+                else: 
+                    # Set up karen
+                    karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
+                    # Set its position to a random height and off screen right
+                    karen.left = random.randint(20, SCREEN_WIDTH - 20)
+                    karen.top = SCREEN_HEIGHT
+                    self.karen_sprite_list.append(karen)
+
 
 
     def check_projectile_collisions(self):
