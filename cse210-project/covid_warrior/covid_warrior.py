@@ -46,8 +46,6 @@ class MenuView(arcade.View):
 
     def on_show(self):
         arcade.set_background_color(arcade.color.WHITE)
-        # arcade.draw_lrwh_rectangle_textured(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
-
 
     def on_draw(self):
         arcade.start_render()
@@ -82,12 +80,10 @@ class MenuView(arcade.View):
         game = GameView()
         game.setup()
         self.window.show_view(game)
-
-
-
-
         
         
+
+
 
 
 class GameOverView(arcade.View):
@@ -125,7 +121,6 @@ class GameOverView(arcade.View):
     
     def on_key_press(self, key, _modifiers):
         if key == arcade.key.ESCAPE:   # resume game
-            # self.window.show_view(self.game_view)
             game = MenuView()
             self.window.show_view(game)
         elif key == arcade.key.ENTER:  # reset game
@@ -146,27 +141,6 @@ class PauseView(arcade.View):
     def on_draw(self):
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
-
-
-        # Draw player, for effect, on pause screen.
-        # The previous View (GameView) was passed in
-        # and saved in self.game_view.
-        # player_sprite = self.game_view.all_sprites
-        # player_sprite.draw()
-        # arcade.SpriteList().append()
-        for sprite in self.game_view.all_sprites:
-            sprite.draw()
-
-        # draw a white filter over him
-        # for sprite in arcade.SpriteList():
-        for sprite in self.game_view.all_sprites:    
-            # sprite.draw()
-            arcade.draw_lrtb_rectangle_filled(left=sprite.left,
-                                                right=sprite.right,
-                                                top=sprite.top,
-                                                bottom=sprite.bottom,
-                                                color=arcade.color.WHITE + (200,))
-
 
         arcade.draw_text("GAME PAUSED",SCREEN_WIDTH/2,SCREEN_HEIGHT/2+50,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
@@ -227,8 +201,6 @@ class Player():
         self.player_sprite = None
         self.player_sprite_list = arcade.SpriteList()
         # Set up the player
-        # Character image from kenney.nl
-        # self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING_PLAYER)
         self.player_sprite = arcade.Sprite(os.path.join(PATH, "./sprites/shooter.png"), SPRITE_SCALING_PLAYER)
 
 
@@ -335,6 +307,7 @@ class GameView(arcade.View):
         arcade.draw_text(level_text, 700, 570,
                          arcade.csscolor.WHITE, 18)
         
+        # Game background color
         arcade.set_background_color(arcade.color.AMAZON)
 
 
@@ -462,7 +435,6 @@ class GameView(arcade.View):
             self.window.show_view(pause)
 
         
-
     def on_key_release(self, key, key_modifiers):
         """
         Called when a key is released. Sets the state of
@@ -475,6 +447,7 @@ class GameView(arcade.View):
 
         if key == arcade.key.RIGHT:
             self.holding_right = False
+
 
 
 
