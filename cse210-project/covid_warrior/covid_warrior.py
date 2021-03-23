@@ -1,5 +1,8 @@
+import os
 import arcade
 import random
+
+PATH = os.path.dirname(os.path.abspath(__file__))
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -35,11 +38,164 @@ removed.
 
 
 
+class MenuView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        # self.background = None
+        self.background = arcade.load_texture(os.path.join(PATH, "./sprites/main-background.jpeg"))
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.WHITE)
+        # arcade.draw_lrwh_rectangle_textured(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
+
+
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
+        arcade.draw_text("COVID Warrior",SCREEN_WIDTH/2,SCREEN_HEIGHT/2 + 50,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        arcade.draw_text("Click to advance.",SCREEN_WIDTH/2,SCREEN_HEIGHT/2,
+                         arcade.color.GRAY, font_size=20, anchor_x="center")
+
+        arcade.draw_text("How to Play",SCREEN_WIDTH/2,SCREEN_HEIGHT/2-60,
+                         arcade.color.BLACK, font_size=20, anchor_x="center")
+
+        howToPlayText1 = "Move your warrior left and right with the arrow keys."
+        howToPlayText2 = "Use A and D to shoot projectiles. A for Masks and D for hand sanitizer."
+        howToPlayText3 = "Shoot the Karens with masks and kill the virus with sanitizer before"
+        howToPlayText4 = "they reach the bottom of the bottom of the screen."
+        howToPlayText5 = "Press Esc. to pause."
+
+        arcade.draw_text(howToPlayText1,SCREEN_WIDTH/2,SCREEN_HEIGHT/2-90,
+                         arcade.color.BLACK, font_size=16, anchor_x="center")
+        arcade.draw_text(howToPlayText2,SCREEN_WIDTH/2,SCREEN_HEIGHT/2-120,
+                         arcade.color.BLACK, font_size=16, anchor_x="center")
+        arcade.draw_text(howToPlayText3,SCREEN_WIDTH/2,SCREEN_HEIGHT/2-150,
+                         arcade.color.BLACK, font_size=16, anchor_x="center")
+        arcade.draw_text(howToPlayText4,SCREEN_WIDTH/2,SCREEN_HEIGHT/2-180,
+                         arcade.color.BLACK, font_size=16, anchor_x="center")
+        arcade.draw_text(howToPlayText5,SCREEN_WIDTH/2,SCREEN_HEIGHT/2-210,
+                         arcade.color.BLACK, font_size=16, anchor_x="center")
+
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game = GameView()
+        game.setup()
+        self.window.show_view(game)
+
+
+
+
+        
+        
+
+
+class GameOverView(arcade.View):
+    def __init__(self,game_view):
+        super().__init__()
+        self.game_view = game_view
+        self.background = arcade.load_texture(os.path.join(PATH, "./sprites/gameOver-background.jpeg"))
+
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.RED)
+    
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
+
+
+        # draw text 
+        arcade.draw_text("GAME OVER",SCREEN_WIDTH/2,SCREEN_HEIGHT/2+50,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+        
+        # Show tip to return or reset
+        arcade.draw_text("Press Enter to play again",
+                        SCREEN_WIDTH/2,
+                        SCREEN_HEIGHT/2,
+                         arcade.color.BLACK,
+                         font_size=20,
+                         anchor_x="center")
+        arcade.draw_text("Press Esc. to return to Main Menu",
+                        SCREEN_WIDTH/2,
+                        SCREEN_HEIGHT/2-30,
+                         arcade.color.BLACK,
+                         font_size=20,
+                         anchor_x="center")
+    
+    def on_key_press(self, key, _modifiers):
+        if key == arcade.key.ESCAPE:   # resume game
+            # self.window.show_view(self.game_view)
+            game = MenuView()
+            self.window.show_view(game)
+        elif key == arcade.key.ENTER:  # reset game
+            game = GameView()
+            self.window.show_view(game)
+
+
+
+class PauseView(arcade.View):
+    def __init__(self, game_view):
+        super().__init__()
+        self.game_view = game_view
+        self.background = arcade.load_texture(os.path.join(PATH, "./sprites/pause-background.jpeg"))
+
+    def on_show(self):
+        arcade.set_background_color(arcade.color.WHITE)
+
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,self.background)
+
+
+        # Draw player, for effect, on pause screen.
+        # The previous View (GameView) was passed in
+        # and saved in self.game_view.
+        # player_sprite = self.game_view.all_sprites
+        # player_sprite.draw()
+        # arcade.SpriteList().append()
+        for sprite in self.game_view.all_sprites:
+            sprite.draw()
+
+        # draw a white filter over him
+        # for sprite in arcade.SpriteList():
+        for sprite in self.game_view.all_sprites:    
+            # sprite.draw()
+            arcade.draw_lrtb_rectangle_filled(left=sprite.left,
+                                                right=sprite.right,
+                                                top=sprite.top,
+                                                bottom=sprite.bottom,
+                                                color=arcade.color.WHITE + (200,))
+
+
+        arcade.draw_text("GAME PAUSED",SCREEN_WIDTH/2,SCREEN_HEIGHT/2+50,
+                         arcade.color.BLACK, font_size=50, anchor_x="center")
+
+        # Show tip to return or reset
+        arcade.draw_text("Press Esc. to resume",
+                        SCREEN_WIDTH/2,
+                        SCREEN_HEIGHT/2,
+                         arcade.color.BLACK,
+                         font_size=20,
+                         anchor_x="center")
+        arcade.draw_text("Press Enter to return to Main Menu",
+                        SCREEN_WIDTH/2,
+                        SCREEN_HEIGHT/2-30,
+                         arcade.color.BLACK,
+                         font_size=20,
+                         anchor_x="center")
+
+    def on_key_press(self, key, _modifiers):
+        if key == arcade.key.ESCAPE:   # resume game
+            self.window.show_view(self.game_view)
+        elif key == arcade.key.ENTER:  # reset game
+            game = MenuView()
+            self.window.show_view(game)
 
 
 class Enemy(arcade.Sprite):
     """
-    This class represents the coins on our screen. It is a child class of
+    This class represents the enemies on our screen. It is a child class of
     the arcade library's "Sprite" class.
     """
 
@@ -73,7 +229,8 @@ class Player():
         # Set up the player
         # Character image from kenney.nl
         # self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING_PLAYER)
-        self.player_sprite = arcade.Sprite("./sprites/shooter.png", SPRITE_SCALING_PLAYER)
+        self.player_sprite = arcade.Sprite(os.path.join(PATH, "./sprites/shooter.png"), SPRITE_SCALING_PLAYER)
+
 
         # self.player_sprite = arcade.Sprite("./sprites/mustache-logo.png")
         self.player_sprite.center_x = 400
@@ -100,18 +257,16 @@ class Player():
 
 
 
-class MyGame(arcade.Window):
+class GameView(arcade.View):
+    
     """
     Main application class.
     """
 
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+    def __init__(self):
+        super().__init__()
 
         arcade.set_background_color(arcade.color.AMAZON)
-
-        # If you have sprite lists, you should create them here,
-        # and set them to None
 
         # Variables that will hold sprite lists
         self.player = Player()
@@ -131,6 +286,8 @@ class MyGame(arcade.Window):
 
         # player's score
         self.score = 0
+
+        self.setup()
 
     def setup(self):
         """ Set up the game variables. Call to re-start the game. """
@@ -177,6 +334,8 @@ class MyGame(arcade.Window):
         level_text = f"Level: {LEVEL}"
         arcade.draw_text(level_text, 700, 570,
                          arcade.csscolor.WHITE, 18)
+        
+        arcade.set_background_color(arcade.color.AMAZON)
 
 
     def on_update(self, delta_time):
@@ -215,7 +374,8 @@ class MyGame(arcade.Window):
 
                 if randoNum % 3 == 0:
                     # Set up virus
-                    virus = Enemy("./sprites/virus.png", SPRITE_SCALING_ENEMY)
+                    virus = Enemy(os.path.join(PATH, "./sprites/virus.png"), SPRITE_SCALING_ENEMY)
+
                     # Set its position to a random position at the top of the screen
                     virus.left = random.randint(60, SCREEN_WIDTH - 75)
                     virus.top = SCREEN_HEIGHT
@@ -223,7 +383,7 @@ class MyGame(arcade.Window):
                     
                 else: 
                     # Set up karen
-                    karen = Enemy("./sprites/karen.png", SPRITE_SCALING_ENEMY)
+                    karen = Enemy(os.path.join(PATH, "./sprites/karen.png"), SPRITE_SCALING_ENEMY)
                     # Set its position to a random position at the top of the screen
                     karen.left = random.randint(60, SCREEN_WIDTH - 75)
                     karen.top = SCREEN_HEIGHT
@@ -266,7 +426,7 @@ class MyGame(arcade.Window):
         # self.projectile_sprite.center_y = self.projectile_sprite.center_y + 5
         if key == arcade.key.A:
             # Create a bullet
-            self.projectile_sprite = arcade.Sprite("./sprites/facemask.png", SPRITE_SCALING_PROJECTILE)
+            self.projectile_sprite = arcade.Sprite(os.path.join(PATH, "./sprites/facemask.png"), SPRITE_SCALING_PROJECTILE)
             # Give the bullet a speed
             self.projectile_sprite.change_y = BULLET_SPEED
             # Position the bullet
@@ -279,7 +439,7 @@ class MyGame(arcade.Window):
             
         if key == arcade.key.D:
             # Create a bullet
-            self.projectile2_sprite = arcade.Sprite("./sprites/sanitizer-drop.png", SPRITE_SCALING_PROJECTILE)
+            self.projectile2_sprite = arcade.Sprite(os.path.join(PATH, "./sprites/sanitizer-drop.png"), SPRITE_SCALING_PROJECTILE)
             # Give the bullet a speed
             self.projectile2_sprite.change_y = BULLET_SPEED
             # Position the bullet
@@ -295,20 +455,12 @@ class MyGame(arcade.Window):
 
         if key == arcade.key.RIGHT:
             self.holding_right = True
+        
+        if key == arcade.key.ESCAPE:
+            # pass self, the current view, to preserve this view's state
+            pause = PauseView(self)
+            self.window.show_view(pause)
 
- 
-
-    # def check_keys(self):
-    #     """
-    #     Checks to see if the user is holding down an
-    #     arrow key, and if so, takes appropriate action.
-    #     """
-    #     if self.holding_left:
-    #         self.ship.turn_left()
-
-    #     if self.holding_right:
-    #         self.ship.turn_right()
-            
         
 
     def on_key_release(self, key, key_modifiers):
@@ -326,11 +478,10 @@ class MyGame(arcade.Window):
 
 
 
-
 def main():
-    """ Main method """
-    game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    menu = MenuView()
+    window.show_view(menu)
     arcade.run()
 
 
