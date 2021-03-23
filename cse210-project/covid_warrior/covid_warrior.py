@@ -39,6 +39,10 @@ removed.
 
 
 class MenuView(arcade.View):
+    """
+    This class is a child of the view class. It displays when the game is started
+    and shows how to play the game.
+    """
     def __init__(self):
         super().__init__()
         # self.background = None
@@ -87,6 +91,12 @@ class MenuView(arcade.View):
 
 
 class GameOverView(arcade.View):
+    """
+    This class is a child of the view class. It appears when the player
+    loses the game and let the player return to the main menu or play
+    again.
+    """
+
     def __init__(self,game_view):
         super().__init__()
         self.game_view = game_view
@@ -130,6 +140,12 @@ class GameOverView(arcade.View):
 
 
 class PauseView(arcade.View):
+    """
+    This class is a child of the view class. It is displayed when the player
+    pushes Esc. while in the game view. It pauses the game and lets the user
+    quit the game if they want to.
+    """
+
     def __init__(self, game_view):
         super().__init__()
         self.game_view = game_view
@@ -167,6 +183,7 @@ class PauseView(arcade.View):
             self.window.show_view(game)
 
 
+
 class Enemy(arcade.Sprite):
     """
     This class represents the enemies on our screen. It is a child class of
@@ -195,6 +212,11 @@ class Enemy(arcade.Sprite):
 
 
 class Player():
+    """
+    This class is what the player controls in the game. It can move sideways
+    on the screen and shoot projectiles.
+    """
+
     def __init__(self):
         self.player_sprite_list = None
         # Set up the player info
@@ -230,9 +252,10 @@ class Player():
 
 
 class GameView(arcade.View):
-    
     """
-    Main application class.
+    This class is a child of the view class. It contains the main game loop and
+    lets the player play the game. It handles all of the sprites and the sounds 
+    of the game and anything else that is needed to defeat the coronavirus.
     """
 
     def __init__(self):
@@ -450,7 +473,7 @@ class GameView(arcade.View):
 
 
 
-
+#  Main class to start the application.
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     menu = MenuView()
