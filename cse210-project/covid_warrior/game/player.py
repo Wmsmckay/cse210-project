@@ -15,7 +15,7 @@ class Player():
         self.player_sprite_list = arcade.SpriteList()
         # Set up the player
         self.player_sprite = arcade.Sprite(os.path.join(constants.PATH, "./sprites/shooter.png"), constants.SPRITE_SCALING_PLAYER)
-
+        self.radius = 30
 
         # self.player_sprite = arcade.Sprite("./sprites/mustache-logo.png")
         self.player_sprite.center_x = 400

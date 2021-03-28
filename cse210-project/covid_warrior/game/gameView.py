@@ -151,7 +151,7 @@ class GameView(arcade.View):
                     # Set its position to a random position at the top of the screen
                     karen.left = random.randint(60, constants.SCREEN_WIDTH - 75)
                     karen.top = constants.SCREEN_HEIGHT
-                    karen.radius = 30
+                    karen.radius = 60
                     self.karen_sprite_list.append(karen)
 
 
