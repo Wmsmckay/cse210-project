@@ -5,6 +5,7 @@ from game import constants
 from game.player import Player
 from game.enemy import Enemy
 
+
 class GameView(arcade.View):
     """
     This class is a child of the view class. It contains the main game loop and
@@ -25,6 +26,7 @@ class GameView(arcade.View):
         self.virus_sprite_list = None
         self.holding_left = False
         self.holding_right = False
+        self.gameOver = False
 
         # Load sounds
         self.shoot_mask = arcade.load_sound(":resources:sounds/laser3.wav")
@@ -107,7 +109,18 @@ class GameView(arcade.View):
         # Loop through each colliding sprite, remove it, and add to the score.
         self.check_projectile_collisions()
         self.spawn_enemies(delta_time)
-    
+        self.checkEnemyPosition()
+        self.check_player_collision()
+        if self.gameOver:
+            # pass self, the current view, to preserve this view's state
+            from game.highScore import HighScore
+            highScore = HighScore()
+            # set new high score
+            if self.score > int(highScore.highScoreRead):
+                highScore.newHighScore(self.score)
+            from game.gameOverView import GameOverView
+            gameOver = GameOverView(self)
+            self.window.show_view(gameOver)
 
     def spawn_enemies(self, delta_time):
 
@@ -129,6 +142,7 @@ class GameView(arcade.View):
                     # Set its position to a random position at the top of the screen
                     virus.left = random.randint(60, constants.SCREEN_WIDTH - 75)
                     virus.top = constants.SCREEN_HEIGHT
+                    virus.radius = 30
                     self.virus_sprite_list.append(virus)
                     
                 else: 
@@ -137,6 +151,7 @@ class GameView(arcade.View):
                     # Set its position to a random position at the top of the screen
                     karen.left = random.randint(60, constants.SCREEN_WIDTH - 75)
                     karen.top = constants.SCREEN_HEIGHT
+                    karen.radius = 60
                     self.karen_sprite_list.append(karen)
 
 
@@ -165,7 +180,27 @@ class GameView(arcade.View):
                 if arcade.check_for_collision(enemy, projectile):
                     self.mask_sprite_list.remove(projectile)
                     arcade.play_sound(self.bad_hit)
-
+    
+    def check_player_collision(self):
+        for enemy in self.karen_sprite_list:
+            too_close = enemy.radius + self.player.radius
+            if (abs(enemy.center_x - self.player.player_sprite.center_x) < too_close and
+                abs(enemy.center_y - self.player.player_sprite.center_y) < too_close):
+                self.gameOver = True
+        for enemy in self.virus_sprite_list:
+            too_close = enemy.radius + self.player.radius
+            if (abs(enemy.center_x - self.player.player_sprite.center_x) < too_close and
+                abs(enemy.center_y - self.player.player_sprite.center_y) < too_close):
+                self.gameOver = True
+    
+    def checkEnemyPosition(self):
+        for enemy in self.virus_sprite_list:
+            if enemy.center_y < 0:
+                self.gameOver = True
+        for enemy in self.karen_sprite_list:
+            if enemy.center_y < 0:
+                self.gameOver = True
+        
 
     def on_key_press(self, key, key_modifiers):
         """

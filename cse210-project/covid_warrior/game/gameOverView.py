@@ -3,6 +3,7 @@ from game import constants
 import os
 from game.gameView import GameView
 from game.menuView import MenuView
+from game.highScore import HighScore
 
 
 class GameOverView(arcade.View):
@@ -15,7 +16,8 @@ class GameOverView(arcade.View):
     def __init__(self,game_view):
         super().__init__()
         self.game_view = game_view
-        self.background = arcade.load_texture(os.path.join(PATH, "./sprites/gameOver-background.jpeg"))
+        self.background = arcade.load_texture(os.path.join(constants.PATH, "./sprites/gameOver-background.jpeg"))
+        self.highScore = HighScore()
 
 
     def on_show(self):
@@ -27,8 +29,16 @@ class GameOverView(arcade.View):
 
 
         # draw text 
-        arcade.draw_text("GAME OVER", constants.SCREEN_WIDTH/2, constants.SCREEN_HEIGHT/2+50,
+        arcade.draw_text("GAME OVER", constants.SCREEN_WIDTH/2, constants.SCREEN_HEIGHT/2+90,
                          arcade.color.BLACK, font_size=50, anchor_x="center")
+        
+        # draw text
+        arcade.draw_text("Score: " + str(self.game_view.score), constants.SCREEN_WIDTH/2, constants.SCREEN_HEIGHT/2+60,
+                         arcade.color.BLACK, font_size=30, anchor_x="center")
+        
+        # draw text
+        arcade.draw_text("High Score: " + self.highScore.highScoreRead, constants.SCREEN_WIDTH/2, constants.SCREEN_HEIGHT/2+20,
+                         arcade.color.BLACK, font_size=30, anchor_x="center")
         
         # Show tip to return or reset
         arcade.draw_text("Press Enter to play again",
