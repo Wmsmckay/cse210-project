@@ -110,6 +110,7 @@ class GameView(arcade.View):
         self.check_projectile_collisions()
         self.spawn_enemies(delta_time)
         self.checkEnemyPosition()
+        self.check_player_collision()
         if self.gameOver:
             # pass self, the current view, to preserve this view's state
             from game.highScore import HighScore
@@ -141,6 +142,7 @@ class GameView(arcade.View):
                     # Set its position to a random position at the top of the screen
                     virus.left = random.randint(60, constants.SCREEN_WIDTH - 75)
                     virus.top = constants.SCREEN_HEIGHT
+                    virus.radius = 30
                     self.virus_sprite_list.append(virus)
                     
                 else: 
@@ -149,6 +151,7 @@ class GameView(arcade.View):
                     # Set its position to a random position at the top of the screen
                     karen.left = random.randint(60, constants.SCREEN_WIDTH - 75)
                     karen.top = constants.SCREEN_HEIGHT
+                    karen.radius = 30
                     self.karen_sprite_list.append(karen)
 
 
@@ -177,6 +180,18 @@ class GameView(arcade.View):
                 if arcade.check_for_collision(enemy, projectile):
                     self.mask_sprite_list.remove(projectile)
                     arcade.play_sound(self.bad_hit)
+    
+    def check_player_collision(self):
+        for enemy in self.karen_sprite_list:
+            too_close = enemy.radius + self.player.radius
+            if (abs(enemy.center_x - self.player.player_sprite.center_x) < too_close and
+                abs(enemy.center_y - self.player.player_sprite.center_y) < too_close):
+                self.gameOver = True
+        for enemy in self.virus_sprite_list:
+            too_close = enemy.radius + self.player.radius
+            if (abs(enemy.center_x - self.player.player_sprite.center_x) < too_close and
+                abs(enemy.center_y - self.player.player_sprite.center_y) < too_close):
+                self.gameOver = True
     
     def checkEnemyPosition(self):
         for enemy in self.virus_sprite_list:
