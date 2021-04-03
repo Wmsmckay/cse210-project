@@ -25,12 +25,12 @@ class Player():
 
     
     def move_left(self):
-        if self.player_sprite.center_x > 0:
+        if self.player_sprite.center_x - 30 > 0:
             self.player_sprite.center_x -= constants.PLAYER_VELOCITY
         
         
     def move_right(self):
-        if self.player_sprite.center_x < constants.SCREEN_WIDTH:
+        if self.player_sprite.center_x + 29 < constants.SCREEN_WIDTH:
             self.player_sprite.center_x += constants.PLAYER_VELOCITY
         
     def draw(self):
