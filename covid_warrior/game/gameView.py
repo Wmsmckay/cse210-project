@@ -82,9 +82,9 @@ class GameView(arcade.View):
                          arcade.csscolor.WHITE, 18)
 
         # Draw the level on the screen
-        level_text = f"Level: {constants.LEVEL}"
-        arcade.draw_text(level_text, 700, 570,
-                         arcade.csscolor.WHITE, 18)
+        # level_text = f"Level: {constants.LEVEL}"
+        # arcade.draw_text(level_text, 700, 570,
+        #                  arcade.csscolor.WHITE, 18)
         
         # Game background color
         arcade.set_background_color(arcade.color.AMAZON)
